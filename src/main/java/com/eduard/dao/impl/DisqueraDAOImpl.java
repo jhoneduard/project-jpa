@@ -104,8 +104,9 @@ public class DisqueraDAOImpl implements DisqueraDAO {
 	@Override
 	public List<Disquera> consultar() {
 		EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
-		
-		TypedQuery<Disquera> queryDisquera =  (TypedQuery<Disquera>) em.createQuery("FROM Disquera ORDER BY descripcion");
+
+		TypedQuery<Disquera> queryDisquera = (TypedQuery<Disquera>) em
+				.createQuery("FROM Disquera ORDER BY descripcion");
 		return queryDisquera.getResultList();
 	}
 
@@ -120,6 +121,28 @@ public class DisqueraDAOImpl implements DisqueraDAO {
 			throw new EntityNotFoundException("La disquera con id " + id + " no se encontro");
 		}
 		return disqueraConsultado;
+	}
+
+	@Override
+	public Disquera consultarByDescripcionJPQL(String descripcion) {
+		EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
+		TypedQuery<Disquera> queryDisquera = (TypedQuery<Disquera>) em
+				.createQuery("FROM Disquera WHERE descripcion =:desc");
+		queryDisquera.setParameter("desc", descripcion);
+
+		// Regresamos un solo resultado
+		return queryDisquera.getSingleResult();
+	}
+
+	@Override
+	public Disquera consultarByDescripcionNative(String descripcion) {
+		EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
+		TypedQuery<Disquera> queryDisquera = (TypedQuery<Disquera>) em
+				.createNativeQuery("SELECT * FROM disquera WHERE descripcion =?", Disquera.class);
+		queryDisquera.setParameter(1, descripcion);
+
+		// Regresamos un solo resultado
+		return queryDisquera.getSingleResult();
 	}
 
 }
